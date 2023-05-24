@@ -3,10 +3,9 @@ type CreateWorkLogParams = {
   task: string;
   description: string;
   time: string;
-  started: string
+  started: string;
   token: string;
 };
-
 
 // createWorkLog({
 //   description: description.value,
@@ -21,7 +20,7 @@ export const createWorkLog = async ({
   task,
   token,
   time,
-  started
+  started,
 }: CreateWorkLogParams) => {
   if (!description) throw new Error("Description not informed");
   if (!task) throw new Error("Task not informed");
@@ -29,33 +28,28 @@ export const createWorkLog = async ({
   if (!time) throw new Error("Time not informed");
   if (!started) started = new Date().toISOString();
 
-  return axios.post(
-    `https://electrolux.atlassian.net/rest/3/issue/${task}/worklog`,
-    {
-      timeSpent: time,
-      comment: {
-        version: 1,
-        type: "doc",
-        content: [
-          {
-            type: "paragraph",
-            content: [
-              {
-                type: "text",
-                text: description,
-              },
-            ],
-          },
-        ],
-      },
-      started,
-    },
-    {
-      headers: {
-        "content-type": "application/json",
-        cookie: `cloud.session.token=${token}`,
-        'Timing-Allow-Origin': '*'
-      },
+  return axios.post(`https://work-log-api.onrender.com/v1/createworklog/`, {
+    description,
+    task,
+    token,
+    time,
+    started,
+  }, {
+    headers: {
+      'Cache-Control': 'no-cache',
+      'Content-Type': 'application/json',
+      'User-Agent': 'PostmanRuntime/7.32.2',
+      'Accept': '*/*',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'CF-Ray': '7b9472033ae11b1c-GRU',
+      'ETag': 'W/"3f-TGcd1ysMGviAe01mVM86KdWwYiE"',
+      'Vary': 'Accept-Encoding',
+      'x-powered-by': 'Express',
+      'x-render-origin-server': 'Render',
+      'Server': 'cloudflare',
+      'Content-Encoding': 'br',
+      'alt-svc': 'h3=":443"; ma=86400, h3-29=":443"; ma=86400'
     }
-  );
+  });
 };
